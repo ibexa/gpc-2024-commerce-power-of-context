@@ -2,7 +2,7 @@
 
 The repository contains all the code snippets included in https://speakerdeck.com/konradoboza/ibexa-global-partner-conference-2024.
 
-The main objective is to present ways to attach remote PIM to Ibexa DXP 4.6 and customize Ibexa packages:
+The main objective is to present ways to configure remote PIM to work with Ibexa DXP 4.6 and customize Ibexa packages:
 - storefront
 - cart
 - checkout
