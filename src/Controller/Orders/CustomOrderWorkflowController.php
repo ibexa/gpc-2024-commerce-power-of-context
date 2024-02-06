@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller\Orders;
 
 use Ibexa\Contracts\AdminUi\Controller\Controller;

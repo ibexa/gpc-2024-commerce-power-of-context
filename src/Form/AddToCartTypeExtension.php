@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use Ibexa\Bundle\Storefront\Form\Type\AddToCartType;
