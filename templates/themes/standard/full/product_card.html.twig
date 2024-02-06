@@ -1,0 +1,76 @@
+{% trans_default_domain 'ibexa_storefront' %}
+
+{% set is_pim_local = ibexa_is_pim_local() %}
+{% set product = content|ibexa_get_product %}
+{% set product_url = is_pim_local
+    ? ibexa_path(content)
+    : route is defined ? path(route, parameters|default([]), is_relative|default(false)) : ''
+%}
+
+{% block product_card %}
+    <div class="ibexa-store-product-card shadow-card">
+        <a class="ibexa-store-product-card__link" href="{{ product_url }}">
+            {% block product_image %}
+                <div class="stamp">Custom(er)izable!</div>
+                <div class="ibexa-store-product-card__image-wrapper">
+                    <img src="{{ asset('assets/social-github-octocat.svg') }}" alt="Customized image" class="ibexa-store-product-card__image">
+                    {% include '@ibexadesign/storefront/component/product_availability/product_availability.html.twig' with {
+                        is_available: ibexa_is_product_available(product),
+                    } %}
+                </div>
+            {% endblock %}
+
+            {% block product_details %}
+                <div class="ibexa-store-product-card__details">
+                    {% block product_code %}
+                        <span class="ibexa-store-product-card__code">
+                            {{ 'ibexa_storefront.product_card.code'|trans({ '%code%': product.code })|desc('Code %code%') }}
+                        </span>
+                    {% endblock %}
+                    {% block product_name %}
+                        <h2 class="ibexa-store-product-card__name">{{ product.name }}</h2>
+                    {% endblock %}
+                    {% block product_description %}
+                        <div class="ibexa-store-product-card__description">
+                            {% if is_pim_local %}
+                                {{ ibexa_render_field(content, 'description') }}
+                            {% endif %}
+                        </div>
+                    {% endblock %}
+                </div>
+            {% endblock %}
+        </a>
+
+        {% block product_footer %}
+            <div class="ibexa-store-product-card__footer">
+                {% block product_price %}
+                    {% include '@ibexadesign/storefront/component/price/price.html.twig' with {
+                        price: product.price.getMoney()|default(null),
+                    } %}
+                {% endblock %}
+                {% block product_actions %}
+                    <div class="ibexa-store-product-card__actions">
+                        {% if not product.isBaseProduct() %}
+                            {% include '@ibexadesign/cart/component/add_to_cart/add_to_cart.html.twig' with {
+                                product_code: product.code,
+                                is_disabled: product.price is null or not ibexa_is_product_available(product),
+                                attr: {
+                                    class: 'ibexa-store-product-card__add-to-cart',
+                                },
+                            } %}
+                        {% else %}
+                            <a
+                                class="ibexa-store-btn ibexa-store-btn--outline-light ibexa-store-product-card__view-details"
+                                href="{{ product_url }}"
+                            >
+                                {{ 'ibexa_storefront.product_card.view_details_btn.label'|trans|desc('View details') }}
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endblock %}
+            </div>
+        {% endblock %}
+    </div>
+
+    {{ encore_entry_link_tags('product-customizer-css') }}
+{% endblock %}

@@ -1,0 +1,10 @@
+my_product_view:
+    path: /my_product/view/{productCode}
+    controller: App\Controller\ProductViewController::renderAction
+    methods: [GET]
+
+#orders custom workflow transition
+confirm_with_vendor:
+    path: /confirm_with_vendor/{orderId}
+    controller: App\Controller\Orders\CustomOrderWorkflowController::confirmWithVendorAction
+    methods: [GET]

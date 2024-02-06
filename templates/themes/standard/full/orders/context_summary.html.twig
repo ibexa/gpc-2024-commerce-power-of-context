@@ -1,0 +1,75 @@
+{% trans_default_domain 'ibexa_payment' %}
+
+<div class="ibexa-om-order-tab-summary__details-wrapper ibexa-om-order-tab-summary__details-wrapper--context">
+    {% set context = order.getContext().get('context') %}
+    {% set caption = context.getCaption() %}
+    {% set color = context.getColor() %}
+    {% set shape = context.getShape() %}
+    {% set has_border = context.hasBorder() %}
+    {% set has_fireworks = context.hasFireworks() %}
+
+    {% set preview %}
+        <div class="ibexa-store-product__slider-wrapper" style="margin-top: 20px;">
+            <div class="caption-container">
+                <span class="caption">{{ caption }}</span>
+            </div>
+
+            <img
+                src="{{ asset('assets/social-github-octocat.svg') }}"
+                alt="Customized image"
+                class="customized-image {{ shape }} {% if has_border == true %}border{% endif %}"
+                style="background:{{ color }}"
+            />
+
+            <div class="fireworks {% if has_fireworks %}pyro{% endif %}">
+                <div class="before"></div>
+                <div class="after"></div>
+            </div>
+        </div>
+
+        {{ encore_entry_link_tags('product-customizer-css') }}
+    {% endset %}
+
+    {% set vendor_button %}
+        {% set action = path('confirm_with_vendor', {
+            'orderId': order.getId(),
+        }) %}
+
+        <a href="{{ action }}" class="btn ibexa-btn ibexa-btn--secondary ibexa-btn--small">Confirm with vendor</a>
+    {% endset %}
+
+    {% include '@ibexadesign/ui/component/details/details.html.twig' with {
+        headline: 'Contextual data',
+        headline_items: headline_actions|default(''),
+        items: [
+            {
+                label: 'Caption',
+                content: caption,
+            },
+            {
+                label: 'Color',
+                content: color,
+            },
+            {
+                label: 'Shape',
+                content: shape,
+            },
+            {
+                label: 'With border?',
+                content: has_border ? 'yes' : 'no',
+            },
+            {
+                label: 'With fireworks?',
+                content: has_fireworks ? 'yes' : 'no',
+            },
+            {
+                label: 'Preview',
+                content: preview,
+            },
+            {
+                label: '',
+                content: vendor_button,
+            },
+        ]
+    } only %}
+</div>

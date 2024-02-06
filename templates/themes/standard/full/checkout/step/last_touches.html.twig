@@ -1,0 +1,44 @@
+{% extends '@ibexadesign/checkout/layout.html.twig' %}
+
+{% trans_default_domain 'ibexa_checkout' %}
+
+{% form_theme form '@ibexadesign/storefront/form_fields.html.twig' %}
+
+{% block content %}
+    {% set firstEntry = cart.getEntries().toArray()[0] %}
+    {% set firstEntryContext = firstEntry.getContext() %}
+
+    <div class="ibexa-store-product__slider-wrapper" style="width: 600px; margin: 0 auto;">
+        <div class="caption-container" style="margin-bottom: -95px; width: 600px;">
+            <span class="caption">{{ firstEntryContext.get('caption') }}</span>
+        </div>
+
+        <img
+            src="{{ asset('assets/social-github-octocat.svg') }}"
+            alt="Customized image"
+            class="customized-image {{ firstEntryContext.get('shape') }} {% if firstEntryContext.get('hasBorder') == true %}border{% endif %}"
+            style="background:{{ firstEntryContext.get('color') }}"
+        />
+
+        <div class="fireworks">
+            <div class="before"></div>
+            <div class="after"></div>
+        </div>
+
+        <div style="margin-top: 20px; margin-left: 170px;">
+            <button class="pushable" name="fireworks">
+              <span class="front">
+                Want some fireworks?
+              </span>
+            </button>
+        </div>
+    </div>
+
+    {{ form_start(form) }}
+        {{ form_widget(form.last_touches.has_fireworks) }}
+        {% include '@ibexadesign/checkout/component/actions.html.twig' %}
+    {{ form_end(form) }}
+
+    {{ encore_entry_link_tags('product-customizer-css') }}
+    {{ encore_entry_script_tags('last-touches-step') }}
+{% endblock %}

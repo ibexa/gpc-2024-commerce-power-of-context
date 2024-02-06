@@ -1,0 +1,21 @@
+parameters:
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    App\Serialization\BadgeContextNormalizer:
+        tags:
+            - { name: ibexa.order_management.serializer.normalizer, priority: -90 }
+
+    App\UI\ContextSummary:
+        tags:
+            - { name: ibexa.admin_ui.component, group: order-details-summary-grid, priority: 200 }

@@ -1,0 +1,7 @@
+ibexa_product_catalog:
+    engines:
+        in_memory:
+            type: in_memory
+            options:
+                root_location_remote_id: ibexa_product_catalog_root
+                product_type_group_identifier: 'product'

@@ -1,0 +1,130 @@
+{% extends '@ibexadesign/storefront/layout.html.twig' %}
+
+{% trans_default_domain 'ibexa_storefront' %}
+
+{% form_theme cart_form '@ibexadesign/storefront/form_fields.html.twig' %}
+
+{% block content %}
+    <div class="ibexa-store-product">
+        <div class="ibexa-store-product__card">
+            <div class="ibexa-store-product__slider-wrapper">
+                <div class="caption-container">
+                    <span class="caption">Test caption!</span>
+                </div>
+                <img src="{{ asset('assets/social-github-octocat.svg') }}" alt="Customized image" class="customized-image"/>
+            </div>
+
+            {% block product_actions_wrapper %}
+                <div class="ibexa-store-product__actions-wrapper" style="padding-left: 15px;">
+                    {% block product_actions %}
+                        {% set is_product_available = ibexa_is_product_available(product) %}
+
+                        {% block product_name %}
+                            <h1 class="ibexa-store-product__name">{{ product.name }}</h1>
+                        {% endblock %}
+
+                        {% block product_code %}
+                            <span class="ibexa-store-product__code">
+                                {{ 'ibexa_storefront.product.code'|trans({ '%code%': product.code })|desc('Code %code%') }}
+                            </span>
+                        {% endblock %}
+
+                        {% block product_availability %}
+                            {% include '@ibexadesign/storefront/component/product_availability/product_availability.html.twig' with {
+                                is_available: is_product_available,
+                                attr: {
+                                    class: 'ibexa-store-product__availability',
+                                },
+                            } %}
+                        {% endblock %}
+
+                        {% block product_price %}
+                            {% include '@ibexadesign/storefront/component/price/price.html.twig' with {
+                                price: product.price.getMoney()|default(null),
+                            } %}
+                        {% endblock %}
+
+                        {% block cart %}
+                            {% embed '@ibexadesign/cart/component/add_to_cart/add_to_cart.html.twig' with {
+                                product_code: not product.isBaseProduct() ? product.code,
+                                is_product_with_variants: cart_form.variant is defined,
+                                is_disabled: product.price is null or not is_product_available,
+                                attr: {
+                                    class: 'ibexa-store-product__add-to-cart',
+                                },
+                            } %}
+                                {% block component %}
+                                    {{ form_start(cart_form, {
+                                        attr: {
+                                            class: 'ibexa-store-product__add-to-cart-form',
+                                        },
+                                    }) }}
+                                    {{ parent() }}
+
+                                    {{ form_end(cart_form) }}
+                                {% endblock %}
+
+                                {% block content %}
+                                    {% if cart_form.variant is defined %}
+                                        {{ form_widget(cart_form.variant, { attr: {
+                                            class: 'ibexa-store-add-to-cart__variant-selector',
+                                            hidden: cart_form.variant.vars.choices is empty
+                                        }}) }}
+                                    {% endif %}
+                                    {{ parent() }}
+                                    {{ form_rest(cart_form) }}
+                                {% endblock %}
+
+                                {% block quantity %}
+                                    {{ form_widget(cart_form.quantity, { attr: quantity_input_attr }) }}
+                                    {{ block('quantity_label') }}
+                                {% endblock %}
+                            {% endembed %}
+                        {% endblock %}
+                    {% endblock %}
+                </div>
+            {% endblock %}
+        </div>
+        {% block product_info_wrapper %}
+            <div class="ibexa-store-product__info-wrapper">
+                {% block product_info %}
+                    {% block product_attributes %}
+                        {% embed '@ibexadesign/storefront/component/info_box.html.twig' with { product } only %}
+                            {% block content %}
+                                <h4 class="ibexa-store-product__info-title">{{ 'ibexa_storefront.product.details.title'|trans()|desc('Details') }}</h4>
+                                <div class="ibexa-store-attributes">
+                                    {% for attribute in product.getAttributes() %}
+                                        {% set attribute_definition = attribute.getAttributeDefinition() %}
+                                        {% set attribute_value = attribute|ibexa_format_product_attribute %}
+
+                                        <div class="ibexa-store-attributes__item">
+                                            <div class="ibexa-store-attributes__item-name">{{ attribute_definition.getName() }}</div>
+                                            <div class="ibexa-store-attributes__item-value">
+                                                {{ attribute_value }}
+                                                {% if attribute_definition.type.identifier is same as('color') %}
+                                                    <span class="ibexa-store-attributes__item-color-preview" style="background-color:{{attribute_value}};"></span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endblock %}
+                        {% endembed %}
+                    {% endblock %}
+                {% endblock %}
+            </div>
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {{ encore_entry_link_tags('product-customizer-css') }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    {{ encore_entry_script_tags('product-customizer') }}
+{% endblock %}
